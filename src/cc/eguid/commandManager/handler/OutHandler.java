@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import cc.eguid.commandManager.CommandManager;
+import cc.eguid.commandManager.FFCH4J;
 
 /**
  * 任务消息输出处理器
@@ -89,7 +90,7 @@ public class OutHandler extends Thread {
 	public void run() {
 		String msg = null;
 		try {
-			if (CommandManager.config.isDebug()) {
+			if (FFCH4J.config().isDebug()) {
 				System.out.println(id + "开始推流！");
 			} 
 			while (desstatus && (msg = br.readLine()) != null) {

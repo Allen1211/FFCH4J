@@ -1,4 +1,7 @@
 package cc.eguid.commandManager.handler;
+
+import cc.eguid.commandManager.FFCH4J;
+
 /**
  * 默认任务消息输出处理
  * @author eguid
@@ -25,8 +28,10 @@ public class DefaultOutHandlerMethod implements OutHandlerMethod{
 			isBroken=true;
 		}else {
 			isBroken=false;
-			System.err.println(id + "消息：" + msg);
-					
+			if(FFCH4J.config().isDebug()){
+				System.err.println(id + "消息：" + msg);
+			}
+
 		}
 
 	}

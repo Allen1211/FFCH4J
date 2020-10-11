@@ -3,6 +3,7 @@ package cc.eguid.commandManager.handler;
 import java.io.IOException;
 
 import cc.eguid.commandManager.CommandManager;
+import cc.eguid.commandManager.FFCH4J;
 import cc.eguid.commandManager.data.CommandTasker;
 import cc.eguid.commandManager.util.ExecUtil;
 /**
@@ -29,15 +30,16 @@ public class TaskHandlerImpl implements TaskHandler {
 		try {
 			tasker =ExecUtil.createTasker(id,command,ohm);
 			
-			if(CommandManager.config.isDebug())
+			if(FFCH4J.config().isDebug())
 				System.out.println(id+" 执行命令行："+command);
 			
 			return tasker;
 		} catch (IOException e) {
+			e.printStackTrace();
 			//运行失败，停止任务
 			ExecUtil.stop(tasker);
 			
-			if(CommandManager.config.isDebug())
+			if(FFCH4J.config().isDebug())
 				System.err.println(id+" 执行命令失败！进程和输出线程已停止");
 			
 			// 出现异常说明开启失败，返回null

@@ -1,6 +1,7 @@
 package cc.eguid.commandManager.commandbuidler;
 
 import cc.eguid.commandManager.CommandManager;
+import cc.eguid.commandManager.FFCH4J;
 
 /**
  * 默认流式命令行构建器（非线程安全）
@@ -29,7 +30,7 @@ public class DefaultCommandBuidler implements CommandBuidler{
 
 	@Override
 	public CommandBuidler create() {
-		return create(CommandManager.config.getPath());
+		return create(FFCH4J.config().getPath());
 	}
 
 	@Override

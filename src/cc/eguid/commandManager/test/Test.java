@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cc.eguid.commandManager.CommandManager;
-import cc.eguid.commandManager.CommandManagerImpl;
+import cc.eguid.commandManager.FFCH4J;
 import cc.eguid.commandManager.commandbuidler.CommandBuidlerFactory;
 import cc.eguid.commandManager.data.CommandTasker;
 /**
@@ -20,12 +20,12 @@ public class Test {
 	 * @throws InterruptedException
 	 */
 	public static void test1() throws InterruptedException{
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("appName", "test123");
-		map.put("input", "rtsp://admin:admin@192.168.2.236:37779/cam/realmonitor?channel=1&subtype=0");
-		map.put("output", "rtmp://192.168.30.21/live/");
-		map.put("codec", "h264");
+		map.put("input", "rtsp://admin:junchengkeji2020@113.109.215.49:10081/cam/realmonitor?channel=1&subtype=0");
+		map.put("output", "rtmp://127.0.0.1:1935/myapp/room");
+		map.put("c", "h264");
 		map.put("fmt", "flv");
 		map.put("fps", "25");
 		map.put("rs", "640x360");
@@ -48,7 +48,7 @@ public class Test {
 	 * @throws InterruptedException
 	 */
 	public static void test2() throws InterruptedException{
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		// -rtsp_transport tcp 
 		//测试多个任何同时执行和停止情况
 		//默认方式发布任务
@@ -63,7 +63,7 @@ public class Test {
 	 * @throws InterruptedException
 	 */
 	public static void test4() throws InterruptedException{
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		// -rtsp_transport tcp 
 		//测试多个任何同时执行和停止情况
 		//默认方式发布任务
@@ -79,7 +79,7 @@ public class Test {
 	 * @throws InterruptedException
 	 */
 	public static void test3() throws InterruptedException{
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		// -rtsp_transport tcp 
 		//测试多个任何同时执行和停止情况
 		//false表示使用配置文件中的ffmpeg路径，true表示本条命令已经包含ffmpeg所在的完整路径
@@ -104,24 +104,59 @@ public class Test {
 	 * @throws InterruptedException
 	 */
 	public static void testStreamCommandAssmbly() throws InterruptedException {
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		manager.start("test1", CommandBuidlerFactory.createBuidler()
-				.add("ffmpeg").add("-i","rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov")
+				.add("ffmpeg")
 				.add("-rtsp_transport","tcp")
-				.add("-vcodec","copy")
-				.add("-acodec","copy")
+				.add("-i","rtsp://admin:junchengkeji2020@113.109.215.49:10081/cam/realmonitor?channel=1&subtype=0")
+				.add("-c","copy")
 				.add("-f","flv")
-				.add("-y").add("rtmp://106.14.182.20:1935/rtmp/test1"));
-		Thread.sleep(30000);
+				.add("rtmp://127.0.0.1:1935/myapp/room"));
+//		manager.start("test1", CommandBuidlerFactory.createBuidler()
+//				.add("ffmpeg").add("-i","rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov")
+//				.add("-rtsp_transport","tcp")
+//				.add("-vcodec","copy")
+//				.add("-acodec","copy")
+//				.add("-f","flv")
+//				.add("-y").add("rtmp://106.14.182.20:1935/rtmp/test1"));
+
+		CommandTasker tasker1 = manager.query("test1");
+		System.out.println(tasker1);
+
+		Thread.sleep(2000);
+
+		manager.start("test2", CommandBuidlerFactory.createBuidler()
+				.add("ffmpeg")
+				.add("-rtsp_transport","tcp")
+				.add("-i","rtsp://admin:junchengkeji2020@113.109.215.49:10081/cam/realmonitor?channel=1&subtype=0")
+				.add("-c","copy")
+				.add("-f","flv")
+				.add("rtmp://127.0.0.1:1935/myapp/room2"));
+
+		CommandTasker tasker2 = manager.query("test1");
+		System.out.println(tasker2);
+
+		Thread.sleep(2000);
+
+		Collection<CommandTasker> commandTaskers = manager.queryAll();
+		commandTaskers.forEach(System.out::println);
+
+		manager.stop("test1");
+		commandTaskers = manager.queryAll();
+		commandTaskers.forEach(System.out::println);
+
+
+		Thread.sleep(10000);
 		// 停止全部任务
 		manager.stopAll();
+		manager.destory();
 	}
 	/**
 	 * 测试任务中断自动重启任务
 	 * @throws InterruptedException 
 	 */
 	public static void testBroken() throws InterruptedException {
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		manager.start("test1", CommandBuidlerFactory.createBuidler()
 				.add("ffmpeg").add("-i","rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov")
 				.add("-rtsp_transport","tcp")
@@ -139,7 +174,7 @@ public class Test {
 	 * @throws InterruptedException 
 	 */
 	public static void testBrokenMuti() throws InterruptedException {
-		CommandManager manager = new CommandManagerImpl();
+		CommandManager manager = FFCH4J.getManager(null);
 		manager.start("test1", CommandBuidlerFactory.createBuidler()
 				.add("ffmpeg").add("-i","rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov")
 				.add("-rtsp_transport","tcp")
@@ -186,8 +221,8 @@ public class Test {
 //		test2();
 //		test3();
 //		test4();
-//		testStreamCommandAssmbly();
+		testStreamCommandAssmbly();
 //		testBroken();
-		testBrokenMuti();
+//		testBrokenMuti();
 	}
 }

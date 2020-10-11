@@ -7,6 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import cc.eguid.commandManager.CommandManager;
+import cc.eguid.commandManager.FFCH4J;
 import cc.eguid.commandManager.callback.EventCallBack;
 import cc.eguid.commandManager.callback.EventCallBackType;
 import cc.eguid.commandManager.data.CommandTasker;
@@ -38,7 +39,7 @@ public class EventMsgNetWorker extends Thread implements EventCallBack{
 				while (queue.peek() != null) {
 					TaskerEventMsg t = queue.poll();
 					// 借助网络库发送该消息
-					String url = CommandManager.config.getCallback();
+					String url = FFCH4J.config().getCallback();
 					if (reqGET(url)) {
 						System.err.println("发送成功");
 					} else {
